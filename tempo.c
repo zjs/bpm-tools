@@ -144,9 +144,14 @@ void usage(FILE *f)
 		"  -v   Print progress information to stderr\n"
 		"  -h   Display this help message and exit\n\n");
 
-	fprintf(f, "Incoming audio is raw audio at %dHz, mono, 32-bit float; eg.\n"
-		"  sox file.mp3 -t raw -r %d -e float -c 1 | ./" NAME "\n",
+	fprintf(f, "Incoming audio is raw audio on stdin at %dHz, mono, 32-bit float; eg.\n"
+		"  $ sox file.mp3 -t raw -r %d -e float -c 1 | ./" NAME "\n\n",
 		RATE, RATE);
+
+	fprintf(f, "To view autodifference graph:\n"
+		"  $ sox [...] | ./tempo -g > file.dat\n"
+		"  $ gnuplot\n"
+		"  gnuplot> plot \"file.dat\"\n\n");
 }
 
 int main(int argc, char *argv[])
