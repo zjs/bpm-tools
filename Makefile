@@ -3,9 +3,9 @@
 CFLAGS += -Wall -MMD
 LDLIBS += -lm
 
-tempo:	tempo.o
+bpm:	bpm.o
 
 clean:
-	rm -f tempo *.o *.d
+	rm -f bpm *.o *.d
 
 -include *.d
