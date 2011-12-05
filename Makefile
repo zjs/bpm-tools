@@ -1,11 +1,9 @@
 -include .config
 
-CFLAGS += -Wall -MMD
+CFLAGS += -Wall
 LDLIBS += -lm
 
 bpm:	bpm.o
 
 clean:
-	rm -f bpm *.o *.d
-
--include *.d
+	rm -f bpm *.o
