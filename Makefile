@@ -1,4 +1,7 @@
+-include .config
+
 CFLAGS += -Wall -MMD
+LDLIBS += -lm
 
 tempo:	tempo.o
 
