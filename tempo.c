@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2011 Mark Hills <mark@pogo.org.uk>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * version 2, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License version 2 for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * version 2 along with this program; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ *
+ */
+
 #include <assert.h>
 #include <math.h>
 #include <stdbool.h>
@@ -45,7 +64,7 @@ double autodifference(float nrg[], size_t len, double interval)
 	size_t n;
 	double mid, v, diff;
 	static const double beats[] = { -32, -16, -8, -4, -2, -1, 1, 2, 4, 8, 16, 32 },
-			nobeats[] = { -0.5, -0.25, 0.25, 0.5 };
+			nobeats[] = { -0.5, -0.5, 0.5, 0.5 };
 
 	mid = drand() * len;
 	v = sample(nrg, len, mid);
@@ -65,7 +84,7 @@ double autodifference(float nrg[], size_t len, double interval)
 		diff -= fabs(y - v);
 	}
 
-	return diff;
+	return diff / (ARRAY_SIZE(beats) + ARRAY_SIZE(nobeats));
 }
 
 /*
@@ -121,8 +140,11 @@ double scan_for_bpm(float nrg[], size_t len,
 		for (s = 0; s < samples; s++)
 			t += autodifference(nrg, len, interval);
 
-		if (graph)
-			printf("%lf\t%lf\n", interval_to_bpm(interval), t);
+		if (graph) {
+			printf("%lf\t%lf\n",
+				interval_to_bpm(interval),
+				t / samples);
+		}
 
 		/* Track the lowest value */
 
@@ -161,7 +183,6 @@ int main(int argc, char *argv[])
 	off_t n = 0;
 	float bpm, v = 0.0;
 	const char *format = "%0.1f";
-	bool verbose = false;
 
 	for (;;) {
 		int c;
@@ -171,10 +192,6 @@ int main(int argc, char *argv[])
 			break;
 
 		switch (c) {
-		case 'v':
-			verbose = true;
-			break;
-
 		case 'f':
 			format = optarg;
 			break;
@@ -198,11 +215,6 @@ int main(int argc, char *argv[])
 	if (argc > 0) {
 		fprintf(stderr, "%s: Too many arguments\n", NAME);
 		return EX_USAGE;
-	}
-
-	if (verbose) {
-		fputs(BANNER "\n", stderr);
-		fprintf(stderr, "Metering incoming audio\n");
 	}
 
 	for (;;) {
@@ -244,10 +256,7 @@ int main(int argc, char *argv[])
 		nrg[len++] = v;
 	}
 
-	if (verbose)
-		fprintf(stderr, "Sampling tempo range\n");
-
-	bpm = scan_for_bpm(nrg, len, 60.0, 180.0, 400, 1000, (format == NULL));
+	bpm = scan_for_bpm(nrg, len, 60.0, 170.0, 800, 1000, (format == NULL));
 
 	if (format != NULL) {
 		printf(format, bpm);
@@ -255,9 +264,6 @@ int main(int argc, char *argv[])
 	}
 
 	free(nrg);
-
-	if (verbose)
-		fprintf(stderr, "Done\n");
 
 	return 0;
 }
