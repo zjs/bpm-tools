@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
 			v -= (v - z) / 512;
 		}
 
-		/* Periodically sample the energy to give a
+		/* At regular intervals, sample the energy to give a
 		 * low-resolution overview of the track */
 
 		n++;
