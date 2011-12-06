@@ -25,8 +25,8 @@
 #include <sysexits.h>
 #include <unistd.h>
 
-#define BANNER "tempo 0.1 (C) Copyright 2011 Mark Hills <mark@pogo.org.uk>"
-#define NAME "tempo"
+#define BANNER "bpm 0.1 (C) Copyright 2011 Mark Hills <mark@pogo.org.uk>"
+#define NAME "bpm"
 
 #define RATE 44100 /* of input data */
 
@@ -122,7 +122,7 @@ double scan_for_bpm(float nrg[], size_t len,
 		double slowest, double fastest,
 		unsigned int steps,
 		unsigned int samples,
-		bool graph)
+		FILE *file)
 {
 	double step, interval, trough, height;
 	unsigned int s;
@@ -140,8 +140,8 @@ double scan_for_bpm(float nrg[], size_t len,
 		for (s = 0; s < samples; s++)
 			t += autodifference(nrg, len, interval);
 
-		if (graph) {
-			printf("%lf\t%lf\n",
+		if (file != NULL) {
+			fprintf(file, "%lf\t%lf\n",
 				interval_to_bpm(interval),
 				t / samples);
 		}
@@ -161,17 +161,18 @@ void usage(FILE *f)
 {
 	fprintf(f, "Usage: " NAME " [options]\n"
 		"Analyse the tempo (in beats-per-minute, BPM) of incoming audio\n\n"
-		"  -g   Output autodifference graph to stdout\n"
-		"  -f   Print format for final BPM value (default \"%%0.1f\")\n"
-		"  -v   Print progress information to stderr\n"
-		"  -h   Display this help message and exit\n\n");
+		"  -g <path>  Output autodifference data to file\n"
+		"  -e <path>  Output energy data to file\n"
+		"  -f         Print format for final BPM value (default \"%%0.1f\")\n"
+		"  -v         Print progress information to stderr\n"
+		"  -h         Display this help message and exit\n\n");
 
 	fprintf(f, "Incoming audio is raw audio on stdin at %dHz, mono, 32-bit float; eg.\n"
-		"  $ sox file.mp3 -t raw -r %d -e float -c 1 | ./" NAME "\n\n",
+		"  $ sox file.mp3 -t raw -r %d -e float -c 1 - | ./" NAME "\n\n",
 		RATE, RATE);
 
-	fprintf(f, "To view autodifference graph:\n"
-		"  $ sox [...] | ./tempo -g > file.dat\n"
+	fprintf(f, "To view autodifference or energy data:\n"
+		"  $ sox [...] | ./tempo -g file.dat\n"
 		"  $ gnuplot\n"
 		"  gnuplot> plot \"file.dat\"\n\n");
 }
@@ -183,11 +184,12 @@ int main(int argc, char *argv[])
 	off_t n = 0;
 	float bpm, v = 0.0;
 	const char *format = "%0.1f";
+	FILE *fdiff = NULL, *fnrg = NULL;
 
 	for (;;) {
 		int c;
 
-		c = getopt(argc, argv, "vf:gh");
+		c = getopt(argc, argv, "vf:g:e:h");
 		if (c == -1)
 			break;
 
@@ -197,7 +199,19 @@ int main(int argc, char *argv[])
 			break;
 
 		case 'g':
-			format = NULL;
+			fdiff = fopen(optarg, "w");
+			if (fdiff == NULL) {
+				perror(optarg);
+				return -1;
+			}
+			break;
+
+		case 'e':
+			fnrg = fopen(optarg, "w");
+			if (fnrg == NULL) {
+				perror(optarg);
+				return -1;
+			}
 			break;
 
 		case 'h':
@@ -253,17 +267,30 @@ int main(int argc, char *argv[])
 			buf = n;
 		}
 
+		if (fnrg != NULL) {
+			fprintf(fnrg, "%lf\t%lf\n",
+				(double)len * INTERVAL / RATE, v);
+		}
+
 		nrg[len++] = v;
 	}
 
-	bpm = scan_for_bpm(nrg, len, 60.0, 170.0, 800, 1000, (format == NULL));
+	bpm = scan_for_bpm(nrg, len, 72.0, 168.0, 1200, 1200, fdiff);
 
-	if (format != NULL) {
-		printf(format, bpm);
-		putc('\n', stdout);
-	}
+	printf(format, bpm);
+	putc('\n', stdout);
 
 	free(nrg);
+
+	if (fdiff != NULL) {
+		if (fclose(fdiff) != 0)
+			perror("fclose");
+	}
+
+	if (fnrg != NULL) {
+		if (fclose(fnrg) != 0)
+			perror("fclose");
+	}
 
 	return 0;
 }
