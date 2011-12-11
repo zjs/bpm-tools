@@ -33,8 +33,6 @@
 #define BLOCK 4096
 #define INTERVAL 128
 
-#define drand() drand48()
-
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
 
 /*
@@ -66,7 +64,7 @@ double autodifference(float nrg[], size_t len, double interval)
 	static const double beats[] = { -32, -16, -8, -4, -2, -1, 1, 2, 4, 8, 16, 32 },
 			nobeats[] = { -0.5, -0.25, 0.25, 0.5 };
 
-	mid = drand() * len;
+	mid = drand48() * len;
 	v = sample(nrg, len, mid);
 
 	diff = 0.0;
