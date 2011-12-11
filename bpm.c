@@ -64,7 +64,7 @@ double autodifference(float nrg[], size_t len, double interval)
 	size_t n;
 	double mid, v, diff;
 	static const double beats[] = { -32, -16, -8, -4, -2, -1, 1, 2, 4, 8, 16, 32 },
-			nobeats[] = { -0.5, -0.5, 0.5, 0.5 };
+			nobeats[] = { -0.5, -0.25, 0.25, 0.5 };
 
 	mid = drand() * len;
 	v = sample(nrg, len, mid);
