@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
 		nrg[len++] = v;
 	}
 
-	bpm = scan_for_bpm(nrg, len, 72.0, 168.0, 1200, 1200, fdiff);
+	bpm = scan_for_bpm(nrg, len, 72.0, 168.0, 1024, 1024, fdiff);
 
 	printf(format, bpm);
 	putc('\n', stdout);
