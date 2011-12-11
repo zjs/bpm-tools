@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# View graph of BPM analysis
+#
+
+set -e
+
+if [ -z "$1" ]; then
+	echo "Usage: $0 <file>" >&2
+	exit 1
+fi
+
+set -u
+
+TMP=`mktemp -t bpm.XXXXXX` || exit 1
+trap "rm $TMP" 0
+
+sox "$1" -r 44100 -e float -c 1 -t raw - | bpm -g $TMP
+gnuplot -p -e "set style data lines; plot \"$TMP\""

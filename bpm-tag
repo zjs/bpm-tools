@@ -1,0 +1,80 @@
+#!/bin/sh
+#
+# Analyse an audio file and add BPM metadata
+#
+
+set -eu
+
+# Parse command line arguments
+
+FORCE=false
+WRITE=true
+
+while getopts "fn" OPT; do
+	case "$OPT" in
+	f)
+		FORCE=true
+		;;
+	n)
+		WRITE=false
+		;;
+	esac
+done
+shift $((OPTIND - 1))
+
+FILE="$1"
+shift
+
+# Don't overwrite an existing BPM tag
+
+case "$FILE" in
+*.flac)
+	BPM=`metaflac --show-tag=BPM "$FILE" | sed -e 's/BPM=//'`
+	;;
+*.mp3)
+	BPM=`id3v2 -R "$FILE" | sed -n 's/^TBPM.*: \([0-9\.]\+\)/\1/p'`
+	;;
+*.ogg)
+	BPM=`vorbiscomment "$FILE" | sed -n 's/^BPM=//p'`
+	;;
+*)
+	echo "$FILE: file extension not known" >&2
+	exit 1
+	;;
+esac
+
+if [ -n "$BPM" ] && ! $FORCE; then
+	echo "$FILE: already tagged, $BPM BPM" >&2
+	exit 1
+fi
+
+# Analyse the BPM
+
+BPM=`sox -V1 "$FILE" -r 44100 -e float -c 1 -t raw - | bpm`
+if [ -z "$BPM" ]; then
+	exit 1
+fi
+
+if ! $WRITE; then
+	echo "$FILE: $BPM BPM" >&2
+	exit 0
+fi
+
+# Write a BPM tag
+
+case "$FILE" in
+*.flac)
+	metaflac --remove-tag=BPM --set-tag="BPM=$BPM" "$FILE"
+	;;
+*.mp3)
+	id3v2 --TBPM "$BPM" "$FILE"
+	;;
+*.ogg)
+	vorbiscomment -at "BPM=$BPM" "$FILE"
+	;;
+*)
+	echo "$FILE: don't know how to tag this type of file" >&2
+	exit 1
+esac
+
+echo "$FILE: $BPM BPM" >&2
