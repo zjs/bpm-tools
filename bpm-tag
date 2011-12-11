@@ -3,14 +3,29 @@
 # Analyse an audio file and add BPM metadata
 #
 
-set -eu
+set -e
+
+usage()
+{
+	cat <<END
+bpm-tag 0.0-beta (C) Copyright 2011 Mark Hills <mark@pogo.org.uk>
+
+Usage: bpm-tag [options] <file>
+Tag an audio file with tempo (in beats-per-minute, BPM)
+
+  -f   Ignore existing BPM value
+  -n   Display BPM only, don't tag
+  -h   Display this help message and exit
+
+END
+}
 
 # Parse command line arguments
 
 FORCE=false
 WRITE=true
 
-while getopts "fn" OPT; do
+while getopts "fhn" OPT; do
 	case "$OPT" in
 	f)
 		FORCE=true
@@ -18,9 +33,22 @@ while getopts "fn" OPT; do
 	n)
 		WRITE=false
 		;;
+	h)
+		usage
+		exit 0
+		;;
+	?)
+		exit 1
 	esac
 done
 shift $((OPTIND - 1))
+
+if [ -n "$1" ]; then
+	usage >&2
+	exit 1
+fi
+
+set -u
 
 FILE="$1"
 shift

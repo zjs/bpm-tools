@@ -25,7 +25,7 @@
 #include <sysexits.h>
 #include <unistd.h>
 
-#define BANNER "bpm 0.1 (C) Copyright 2011 Mark Hills <mark@pogo.org.uk>"
+#define BANNER "bpm 0.0-beta (C) Copyright 2011 Mark Hills <mark@pogo.org.uk>"
 #define NAME "bpm"
 
 #define RATE 44100 /* of input data */
@@ -158,6 +158,8 @@ double scan_for_bpm(float nrg[], size_t len,
 
 void usage(FILE *f)
 {
+	fputs(BANNER "\n\n", f);
+
 	fprintf(f, "Usage: " NAME " [options]\n"
 		"Analyse the tempo (in beats-per-minute, BPM) of incoming audio\n\n"
 		"  -g <path>  Output autodifference data to file\n"
