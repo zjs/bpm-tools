@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
 	float *nrg = NULL;
 	size_t len = 0, buf = 0;
 	off_t n = 0;
-	float bpm, v = 0.0;
+	double bpm, v = 0.0;
 	const char *format = "%0.1f";
 	FILE *fdiff = NULL, *fnrg = NULL;
 
@@ -239,7 +239,7 @@ int main(int argc, char *argv[])
 
 		/* Maintain an energy meter (similar to PPM) */
 
-		z = fabs(z);
+		z = fabsf(z);
 		if (z > v) {
 			v += (z - v) / 8;
 		} else {
