@@ -153,7 +153,7 @@ double scan_for_bpm(float nrg[], size_t len,
 		}
 	}
 
-	return interval_to_bpm(trough - (step / 2));
+	return interval_to_bpm(trough);
 }
 
 void usage(FILE *f)
