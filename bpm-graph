@@ -12,8 +12,16 @@ fi
 
 set -u
 
+FILE="$1"
+shift
+
 TMP=`mktemp -t bpm.XXXXXX` || exit 1
 trap "rm $TMP" 0
 
-sox "$1" -r 44100 -e float -c 1 -t raw - | bpm -m 60 -x 180 -g $TMP
-gnuplot -p -e "set style data lines; plot \"$TMP\""
+sox "$FILE" -r 44100 -e float -c 1 -t raw - | bpm -m 60 -x 180 -g $TMP
+gnuplot -p <<END
+set style data lines
+set ylabel "Difference"
+set xlabel "Offset (Beats per minute)"
+plot "$TMP" title "`echo "$FILE" | sed -e 's:\":\\\\":g'`"
+END
