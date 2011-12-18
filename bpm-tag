@@ -101,8 +101,9 @@ if [ -z "$BPM" ]; then
 	exit 1
 fi
 
+echo "$FILE: $BPM BPM" >&2
+
 if ! $WRITE; then
-	echo "$FILE: $BPM BPM" >&2
 	exit 0
 fi
 
@@ -122,5 +123,3 @@ case "$FILE" in
 	echo "$FILE: don't know how to tag this type of file" >&2
 	exit 1
 esac
-
-echo "$FILE: $BPM BPM" >&2
