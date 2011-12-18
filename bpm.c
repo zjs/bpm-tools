@@ -29,8 +29,8 @@
 #define NAME "bpm"
 
 #define RATE 44100 /* of input data */
-#define LOWER 72.0
-#define UPPER 168.0
+#define LOWER 84.0
+#define UPPER 146.0
 
 #define BLOCK 4096
 #define INTERVAL 128
