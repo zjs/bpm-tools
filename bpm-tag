@@ -33,6 +33,8 @@ Tag an audio file with tempo (in beats-per-minute, BPM)
 
   -f   Ignore existing BPM value
   -n   Display BPM only, don't tag
+  -m   Minimum detected BPM
+  -x   Maximum detected BPM
   -h   Display this help message and exit
 
 END
@@ -42,14 +44,21 @@ END
 
 FORCE=false
 WRITE=true
+ARGS=""
 
-while getopts "fhn" OPT; do
+while getopts "fhnm:x:" OPT; do
 	case "$OPT" in
 	f)
 		FORCE=true
 		;;
 	n)
 		WRITE=false
+		;;
+	m)
+		ARGS="$ARGS -m $OPTARG"
+		;;
+	x)
+		ARGS="$ARGS -x $OPTARG"
 		;;
 	h)
 		usage
@@ -96,7 +105,7 @@ fi
 
 # Analyse the BPM
 
-BPM=`sox -V1 "$FILE" -r 44100 -e float -c 1 -t raw - | bpm`
+BPM=`sox -V1 "$FILE" -r 44100 -e float -c 1 -t raw - | bpm $ARGS`
 if [ -z "$BPM" ]; then
 	exit 1
 fi

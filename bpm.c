@@ -29,6 +29,8 @@
 #define NAME "bpm"
 
 #define RATE 44100 /* of input data */
+#define LOWER 72.0
+#define UPPER 168.0
 
 #define BLOCK 4096
 #define INTERVAL 128
@@ -165,8 +167,11 @@ void usage(FILE *f)
 		"  -g <path>  Output autodifference data to file\n"
 		"  -e <path>  Output energy data to file\n"
 		"  -f         Print format for final BPM value (default \"%%0.1f\")\n"
+		"  -m <f>     Minimum detected BPM (default %0.0f)\n"
+		"  -x <f>     Maximum detected BPM (default %0.0f)\n"
 		"  -v         Print progress information to stderr\n"
-		"  -h         Display this help message and exit\n\n");
+		"  -h         Display this help message and exit\n\n",
+		LOWER, UPPER);
 
 	fprintf(f, "Incoming audio is raw audio on stdin at %dHz, mono, 32-bit float; eg.\n"
 		"  $ sox file.mp3 -t raw -r %d -e float -c 1 - | ./" NAME "\n\n",
@@ -183,14 +188,14 @@ int main(int argc, char *argv[])
 	float *nrg = NULL;
 	size_t len = 0, buf = 0;
 	off_t n = 0;
-	double bpm, v = 0.0;
+	double bpm, min = LOWER, max = UPPER, v = 0.0;
 	const char *format = "%0.3f";
 	FILE *fdiff = NULL, *fnrg = NULL;
 
 	for (;;) {
 		int c;
 
-		c = getopt(argc, argv, "vf:g:e:h");
+		c = getopt(argc, argv, "vf:g:e:m:x:h");
 		if (c == -1)
 			break;
 
@@ -213,6 +218,14 @@ int main(int argc, char *argv[])
 				perror(optarg);
 				return -1;
 			}
+			break;
+
+		case 'm':
+			min = atof(optarg);
+			break;
+
+		case 'x':
+			max = atof(optarg);
 			break;
 
 		case 'h':
@@ -276,7 +289,7 @@ int main(int argc, char *argv[])
 		nrg[len++] = v;
 	}
 
-	bpm = scan_for_bpm(nrg, len, 72.0, 168.0, 1024, 1024, fdiff);
+	bpm = scan_for_bpm(nrg, len, min, max, 1024, 1024, fdiff);
 
 	printf(format, bpm);
 	putc('\n', stdout);
