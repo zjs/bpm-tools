@@ -62,7 +62,7 @@ static double sample(float nrg[], size_t len, double offset)
 double autodifference(float nrg[], size_t len, double interval)
 {
 	size_t n;
-	double mid, v, diff;
+	double mid, v, diff, total;
 	static const double beats[] = { -32, -16, -8, -4, -2, -1,
 					1, 2, 4, 8, 16, 32 },
 			nobeats[] = { -0.5, -0.25, 0.25, 0.5 };
@@ -71,21 +71,29 @@ double autodifference(float nrg[], size_t len, double interval)
 	v = sample(nrg, len, mid);
 
 	diff = 0.0;
+	total = 0.0;
+
 	for (n = 0; n < ARRAY_SIZE(beats); n++) {
-		double y;
+		double y, w;
 
 		y = sample(nrg, len, mid + beats[n] * interval);
-		diff += fabs(y - v);
+
+		w = 1.0 / fabs(beats[n]);
+		diff += w * fabs(y - v);
+		total += w;
 	}
 
 	for (n = 0; n < ARRAY_SIZE(nobeats); n++) {
-		double y;
+		double y, w;
 
 		y = sample(nrg, len, mid + nobeats[n] * interval);
-		diff -= fabs(y - v);
+
+		w = fabs(nobeats[n]);
+		diff -= w * fabs(y - v);
+		total += w;
 	}
 
-	return diff / (ARRAY_SIZE(beats) + ARRAY_SIZE(nobeats));
+	return diff / total;
 }
 
 /*
