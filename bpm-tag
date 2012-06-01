@@ -26,7 +26,7 @@ set -e
 usage()
 {
 	cat <<END
-bpm-tag 0.0-beta (C) Copyright 2011 Mark Hills <mark@pogo.org.uk>
+bpm-tag (C) Copyright 2012 Mark Hills <mark@pogo.org.uk>
 
 Usage: bpm-tag [options] <file>
 Tag an audio file with tempo (in beats-per-minute, BPM)
