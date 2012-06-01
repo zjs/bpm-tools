@@ -25,7 +25,7 @@
 #include <sysexits.h>
 #include <unistd.h>
 
-#define BANNER "bpm 0.0-beta (C) Copyright 2011 Mark Hills <mark@pogo.org.uk>"
+#define BANNER "bpm (C) Copyright 2011 Mark Hills <mark@pogo.org.uk>"
 #define NAME "bpm"
 
 #define RATE 44100 /* of input data */
