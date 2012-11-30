@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Mark Hills <mark@pogo.org.uk>
+ * Copyright (C) 2012 Mark Hills <mark@xwax.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@
 #include <sysexits.h>
 #include <unistd.h>
 
-#define BANNER "bpm (C) Copyright 2012 Mark Hills <mark@pogo.org.uk>"
+#define BANNER "bpm (C) Copyright 2012 Mark Hills <mark@xwax.org>"
 #define NAME "bpm"
 
 #define RATE 44100 /* of input data */
