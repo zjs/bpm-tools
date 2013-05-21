@@ -186,7 +186,7 @@ void usage(FILE *f)
 		RATE, RATE);
 
 	fprintf(f, "To view autodifference or energy data:\n"
-		"  $ sox [...] | ./tempo -g file.dat\n"
+		"  $ sox [...] | " NAME " -g file.dat\n"
 		"  $ gnuplot\n"
 		"  gnuplot> plot \"file.dat\"\n\n");
 }
