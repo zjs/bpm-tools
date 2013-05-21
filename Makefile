@@ -6,6 +6,8 @@ INSTALL ?= install
 BINDIR ?= $(PREFIX)/bin
 MANDIR ?= $(PREFIX)/share/man
 
+CFLAGS ?= -O3
+
 CFLAGS += -Wall
 LDLIBS += -lm
 
