@@ -141,6 +141,7 @@ double scan_for_bpm(float nrg[], size_t len,
 	step = (slowest - fastest) / steps;
 
 	height = INFINITY;
+	trough = NAN;
 
 	for (interval = fastest; interval <= slowest; interval += step) {
 		double t;
