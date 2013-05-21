@@ -37,6 +37,7 @@ Tag an audio file with tempo (in beats-per-minute, BPM)
   -x   Maximum detected BPM
   -h   Display this help message and exit
 
+See the bpm-tag(1) man page for more information and examples.
 END
 }
 
