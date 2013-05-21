@@ -43,6 +43,11 @@ fi
 FILE="$1"
 shift
 
+if ! which gnuplot > /dev/null 2>&1; then
+	echo "$0: requires gnuplot to be installed" >&1
+	exit 1
+fi
+
 TMP=`mktemp -t bpm.XXXXXX` || exit 1
 trap "rm $TMP" 0
 
