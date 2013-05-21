@@ -46,7 +46,7 @@ shift
 TMP=`mktemp -t bpm.XXXXXX` || exit 1
 trap "rm $TMP" 0
 
-sox "$FILE" -r 44100 -e float -c 1 -t raw - | bpm -m 60 -x 180 -g $TMP
+sox "$FILE" -r 44100 -e float -c 1 -t raw - | bpm -m 60 -x 220 -g $TMP
 gnuplot -p <<END
 set style data lines
 set ylabel "Difference"
