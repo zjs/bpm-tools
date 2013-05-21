@@ -21,7 +21,7 @@
 # View graph of BPM analysis
 #
 
-set -e
+set -eu
 
 usage()
 {
@@ -35,12 +35,10 @@ See the bpm-graph(1) man page for more information.
 END
 }
 
-if [ -z "$1" ] || [ "$1" = "-h" ]; then
+if [ -z "${1-}" ] || [ "$1" = "-h" ]; then
 	usage >&2
 	exit 1
 fi
-
-set -u
 
 FILE="$1"
 shift
