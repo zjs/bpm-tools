@@ -35,6 +35,23 @@ See the bpm-graph(1) man page for more information.
 END
 }
 
+while getopts m:x: flag
+do
+  case $flag in
+    m)
+      m=$OPTARG
+      ;;
+    x)
+      x=$OPTARG
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))
+
 if [ -z "${1-}" ] || [ "$1" = "-h" ]; then
 	usage >&2
 	exit 1
@@ -51,7 +68,7 @@ fi
 TMP=`mktemp -t bpm.XXXXXX` || exit 1
 trap "rm $TMP" 0
 
-sox "$FILE" -r 44100 -e float -c 1 -t raw - | bpm -m 60 -x 220 -g $TMP
+sox "$FILE" -r 44100 -e float -c 1 -t raw - | bpm -m ${m:-50} -x ${x:-400} -g $TMP
 gnuplot -p <<END
 set style data lines
 set ylabel "Difference"
